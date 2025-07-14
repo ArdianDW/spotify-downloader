@@ -53,15 +53,12 @@ def download_image(url):
         pass
     return None
 
-def process_song(query_or_url):
-    if is_spotify_link(query_or_url):
-        metadata = get_metadata(query_or_url)
+def process_song(url):
+    if is_spotify_link(url):
+        metadata = get_metadata(url)
         if not metadata:
             return {"status": "error", "message": "failed to get metadata"}
         search_query = f"{metadata['artist']} {metadata['title']}"
-    else:
-        search_query = query_or_url
-        metadata = {"title": query_or_url, "artist": "", "album": ""}
 
     ytmusic = YTMusic()
     results = ytmusic.search(search_query, filter="songs")
@@ -79,6 +76,7 @@ def process_song(query_or_url):
     filename = f"{artist} - {title}.mp3"
     output_path = os.path.join("downloads", filename)
     temp_output = os.path.join("downloads", "temp.%(ext)s")
+    
 
     ydl_opts = {
         'format': 'bestaudio/best',
@@ -124,7 +122,7 @@ def process_song(query_or_url):
 
         audio.save()
     except Exception as e:
-        return {"status": "error", "message": f"Tagging error: {str(e)}"}
+        return {"status": "error", "message": f"tagging error: {str(e)}"}
 
     return {
         "status": "success",
